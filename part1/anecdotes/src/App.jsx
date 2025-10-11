@@ -2,10 +2,38 @@ import { useState } from 'react'
 
  
 
-const RandomSelected = ({anecdotes, selected, setSelected}) => {
+const randomSelected = ({anecdotes, setSelected}) => {
   console.log("hi")
   console.log(anecdotes.length)
   setSelected(Math.floor(Math.random() * anecdotes.length))
+}
+
+const vote = ({selected, anecdotes, setVotes}) => {
+  setVotes(prev => {
+    const next = [...prev]
+    next[selected] +=1
+    return next
+  })
+
+  
+}
+
+const Display = ({text}) => {
+  return (
+  <h1>{text}</h1>
+  )
+}
+
+const MostVotes = ({votes, anecdotes}) => {
+  const maxValue = Math.max(...votes)
+  const maxIndex = votes.indexOf(maxValue)
+  console.log("MostVotes ok")
+  return (
+    <div>
+    <p>{anecdotes[maxIndex]}</p>
+    <p>has {maxValue} votes</p>
+    </div>
+  )
 }
 
 const App = () => {
@@ -22,11 +50,18 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
 
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+
   return (
     <div>
+      <Display text="Anecdote of the day"/>
       {anecdotes[selected]}
+      <p>has {votes[selected]} votes</p>
       <br/>
-      <button onClick={() => RandomSelected({anecdotes, selected, setSelected})}>next anecdote</button>
+      <button onClick={() => vote({selected, anecdotes, setVotes})}>vote</button>
+      <button onClick={() => randomSelected({anecdotes, selected, setSelected})}>next anecdote</button>
+      <Display text="Anecdote with most votes"/>
+      <MostVotes votes={votes} anecdotes={anecdotes}/>
     </div>
   )
 }
